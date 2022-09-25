@@ -27,6 +27,8 @@
 #include <functional>
 #include<sstream>
 
+#include<iomanip>
+
 #include <tlhelp32.h>
 #include <tchar.h>
 #include <ShellAPI.h>
