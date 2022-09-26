@@ -1,4 +1,4 @@
-#include "Universal.h"
+ï»¿#include "Universal.h"
 
 #define S 1
 #define W 2
@@ -10,42 +10,42 @@ typedef struct DoublePOINT { double x = NULL; double y = NULL; }DoublePOINT;
 typedef struct StringPOINT { string x = NULL; string y = NULL; }StringPOINT;
 
 typedef struct Prerequisites {
-	float KA = 1.0;								//Ö¸¶¨¹¤×÷Çé¿öÏµÊı(Ä¬ÈÏÎª1);
-	float NominalPower = 1;						//Ö¸¶¨µç¶¯»úÃûÒå¹¦ÂÊ(kW)
-	string Type = "";							//Ö¸¶¨´øĞÍ;
-	int MinWrapAngle = 120;						//Ö¸¶¨Ö¸¶¨ÔÊĞíµÄ×îĞ¡°ü½Ç(Ä¬ÈÏ120¡ã);
-	double Epsilon = 0.015;						//Ö¸¶¨Ö¸¶¨µ¯ĞÔ»¬¶¯ÂÊ,Ò»°ãÈ¡[0.01,0.02](Ä¬ÈÏ0.015);
+	float KA = 1.0;								//æŒ‡å®šå·¥ä½œæƒ…å†µç³»æ•°(é»˜è®¤ä¸º1);
+	float NominalPower = 1;						//æŒ‡å®šç”µåŠ¨æœºåä¹‰åŠŸç‡(kW)
+	string Type = "";							//æŒ‡å®šå¸¦å‹;
+	int MinWrapAngle = 120;						//æŒ‡å®šæŒ‡å®šå…è®¸çš„æœ€å°åŒ…è§’(é»˜è®¤120Â°);
+	double Epsilon = 0.015;						//æŒ‡å®šæŒ‡å®šå¼¹æ€§æ»‘åŠ¨ç‡,ä¸€èˆ¬å–[0.01,0.02](é»˜è®¤0.015);
 
-	double ImagTransmissionRatio = 1;			//Ö¸¶¨ÀíÂÛ´«¶¯±È;
-	double TransmissionRatioTolerance = 0.05;	//Ö¸¶¨ÀíÂÛÓëÊµ¼Ê´«¶¯±ÈµÄÔÊĞíÈİ²îÂÊ(Ä¬ÈÏ5%);
+	double ImagTransmissionRatio = 1;			//æŒ‡å®šç†è®ºä¼ åŠ¨æ¯”;
+	double TransmissionRatioTolerance = 0.05;	//æŒ‡å®šç†è®ºä¸å®é™…ä¼ åŠ¨æ¯”çš„å…è®¸å®¹å·®ç‡(é»˜è®¤5%);
 
-	double SmallWheelRotatingSpeed;				//Ö¸¶¨Ğ¡´øÂÖ×ªËÙ(r/min);
-	double BigWheelRotatingSpeed;				//Ö¸¶¨´ó´øÂÖ×ªËÙ(r/min);
+	double SmallWheelRotatingSpeed;				//æŒ‡å®šå°å¸¦è½®è½¬é€Ÿ(r/min);
+	double BigWheelRotatingSpeed;				//æŒ‡å®šå¤§å¸¦è½®è½¬é€Ÿ(r/min);
 
-	float SmallWheelAxleDameter = NULL;				//Ö¸¶¨Ğ¡ÂÖ´«¶¯ÖáÖ±¾¶(mm);
-	float BigWheelAxleDameter = NULL;					//Ö¸¶¨´óÂÖ´«¶¯ÖáÖ±¾¶(mm);
+	float SmallWheelAxleDameter = NULL;			//æŒ‡å®šå°è½®ä¼ åŠ¨è½´ç›´å¾„(mm);
+	float BigWheelAxleDameter = NULL;			//æŒ‡å®šå¤§è½®ä¼ åŠ¨è½´ç›´å¾„(mm);
 }Prerequisites;
 
 typedef struct VBelt {
-	double RealTransmissionRatio = 1;			//Êµ¼Ê´«¶¯±È;
+	double RealTransmissionRatio = 1;			//å®é™…ä¼ åŠ¨æ¯”;
 
-	vector<int> WheelBenchmarkDiameter1;		//Ñ¡ÖĞµÄĞ¡´øÂÖ»ù×¼Ö±¾¶;
-	vector<int> WheelBenchmarkDiameter2;		//Ñ¡ÖĞµÄ´ó´øÂÖ»ù×¼Ö±¾¶;
+	vector<int> WheelBenchmarkDiameter1;		//é€‰ä¸­çš„å°å¸¦è½®åŸºå‡†ç›´å¾„;
+	vector<int> WheelBenchmarkDiameter2;		//é€‰ä¸­çš„å¤§å¸¦è½®åŸºå‡†ç›´å¾„;
 
 	struct Result {
-		vector<int> SmallWheelDiameter;				//´¢´æĞ¡´øÂÖÖ±¾¶;
-		vector<int> BigWheelDiameter;				//´¢´æ´ó´øÂÖÖ±¾¶;
-		vector<double> TransmissionRatio;			//´¢´æ´«¶¯±È;
-		vector<int> RealBeltLength;					//´øµÄ»ù×¼³¤¶È;
-		vector<double> RealWheelbase;				//Êµ¼ÊÖĞĞÄ¾Ø(mm);
-		vector<double> SmallWheelWrapAngle;			//Ğ¡´øÂÖ°ü½Ç(¡ã);
-		vector<double> RealBeltSpeed;				//Êµ¼Ê´øËÙ(m/s);
-		vector<int> BeltNumber_Z;					//È·¶¨´øµÄ¸ùÊız;
+		vector<int> SmallWheelDiameter;				//å‚¨å­˜å°å¸¦è½®ç›´å¾„;99
+		vector<int> BigWheelDiameter;				//å‚¨å­˜å¤§å¸¦è½®ç›´å¾„;
+		vector<double> TransmissionRatio;			//å‚¨å­˜ä¼ åŠ¨æ¯”;
+		vector<int> RealBeltLength;					//å¸¦çš„åŸºå‡†é•¿åº¦;
+		vector<double> RealWheelbase;				//å®é™…ä¸­å¿ƒçŸ©(mm);
+		vector<double> SmallWheelWrapAngle;			//å°å¸¦è½®åŒ…è§’(Â°);
+		vector<double> RealBeltSpeed;				//å®é™…å¸¦é€Ÿ(m/s);
+		vector<int> BeltNumber_Z;					//ç¡®å®šå¸¦çš„æ ¹æ•°z;
 	}Result;
 }VBelt;
 
 typedef struct VWheel {
-	//´¢´æÂÖ²Û¼¸ºÎ²ÎÊı(x=Ğ¡ÂÖ,y=´óÂÖ);
+	//å‚¨å­˜è½®æ§½å‡ ä½•å‚æ•°(x=å°è½®,y=å¤§è½®);
 	DoublePOINT Bd;
 	DoublePOINT Hamin;
 	DoublePOINT Hfmin;
@@ -54,28 +54,28 @@ typedef struct VWheel {
 	DoublePOINT deltaMin;
 	vector<DoublePOINT> phi;
 
-	vector<DoublePOINT> MinWheelBroad;				//´¢´æ×îĞ¡´øÂÖ¿íB(mm);
-	vector<DoublePOINT> MinWheelOutsideDameter;		//´¢´æ×îĞ¡´øÂÖÍâ¾¶da(mm);
-	DoublePOINT WheelHubDameter;					//´¢´æÂÖì±Ö±¾¶d1(mm);
+	vector<DoublePOINT> MinWheelBroad;				//å‚¨å­˜æœ€å°å¸¦è½®å®½B(mm);
+	vector<DoublePOINT> MinWheelOutsideDameter;		//å‚¨å­˜æœ€å°å¸¦è½®å¤–å¾„da(mm);
+	DoublePOINT WheelHubDameter;					//å‚¨å­˜è½®æ¯‚ç›´å¾„d1(mm);
 
-	vector<double> SmallWheelHubBroad;				//´¢´æĞ¡ÂÖÂÖì±¿í¶ÈL(mm);
-	vector<double> BigWheelHubBroad;				//´¢´æ´óÂÖÂÖì±¿í¶ÈL(mm);
+	vector<double> SmallWheelHubBroad;				//å‚¨å­˜å°è½®è½®æ¯‚å®½åº¦L(mm);
+	vector<double> BigWheelHubBroad;				//å‚¨å­˜å¤§è½®è½®æ¯‚å®½åº¦L(mm);
 
-	vector<DoublePOINT> WheelRimINDameter;			//´¢´æÂÖÔµÄÚ¾¶D1(mm);
-	DoublePOINT WheelRimThick;						//´¢´æ×îĞ¡ÂÖÔµºñ¶È(mm)
+	vector<DoublePOINT> WheelRimINDameter;			//å‚¨å­˜è½®ç¼˜å†…å¾„D1(mm);
+	DoublePOINT WheelRimThick;						//å‚¨å­˜æœ€å°è½®ç¼˜åšåº¦(mm)
 
-	vector<string> SmallWheelStruct;				//ÍÆ¼öµÄĞ¡´øÂÖ½á¹¹ĞÎÊ½;
-	vector<string> BigWheelStruct;					//ÍÆ¼öµÄ´ó´øÂÖ½á¹¹ĞÎÊ½;
+	vector<string> SmallWheelStruct;				//æ¨èçš„å°å¸¦è½®ç»“æ„å½¢å¼;
+	vector<string> BigWheelStruct;					//æ¨èçš„å¤§å¸¦è½®ç»“æ„å½¢å¼;
 
-	vector<DoublePOINT> SmallWebThickness;			//Ğ¡ÂÖ¸¹°åºñ¶ÈC';
-	vector<DoublePOINT> BigWebThickness;			//´óÂÖ¸¹°åºñ¶ÈC';
+	vector<DoublePOINT> SmallWebThickness;			//å°è½®è…¹æ¿åšåº¦C';
+	vector<DoublePOINT> BigWebThickness;			//å¤§è½®è…¹æ¿åšåº¦C';
 
-	vector<DoublePOINT> EstimateMass;						//Ô¤¹ÀÖÊÁ¿EM;
+	vector<DoublePOINT> EstimateMass;				//é¢„ä¼°è´¨é‡EM;
 }VWheel;
 
 class VBeltDriveDesigner {
 private:
-	//Ordinary_V_Pulley_WheelBenchmarkDiameter_Diameter_Series(ÆÕÍ¨V´øÂÖ»ù×¼Ö±¾¶ÏµÁĞ);
+	//Ordinary_V_Pulley_WheelBenchmarkDiameter_Diameter_Series(æ™®é€šVå¸¦è½®åŸºå‡†ç›´å¾„ç³»åˆ—);
 	int WheelBenchmarkDiameter_Z[24] = { 50,56,63,71,75,80,90,100,112,125,132,140,150,160,180,200,224,250,280,315,355,400,500,630 };
 	int WheelBenchmarkDiameter_A[28] = { 75,80,85,90,95,100,106,112,118,125,132,140,150,160,180,200,224,250,280,315,355,400,450,500,560,630,710,800 };
 	int WheelBenchmarkDiameter_B[25] = { 125,132,140,150,160,170,180,200,224,250,280,315,355,400,450,500,560,600,630,710,750,800,900,1000,1120 };
@@ -83,7 +83,7 @@ private:
 	int WheelBenchmarkDiameter_D[23] = { 355,375,400,425,450,475,500,560,600,630,710,750,800,900,1000,1060,1120,1250,1400,1500,1600,1800,2000 };
 	int WheelBenchmarkDiameter_E[19] = { 500,530,560,600,630,670,710,800,900,1000,1120,1250,1400,1500,1600,1800,2000,2240,2500 };
 
-	//BeltStandardLength(ÆÕÍ¨V´ø»ù×¼³¤¶È: Ld)£»
+	//BeltStandardLength(æ™®é€šVå¸¦åŸºå‡†é•¿åº¦: Ld)ï¼›
 	int Ld_Z[11] = { 405,475,530,625,700,780,920,1080,1330,1420,1540 };
 	float KL_Z[11] = { 0.87,0.90,0.93,0.96,0.99,1.00,1.04,1.07,1.13,1.14,1.54 };
 	int Ld_A[17] = { 630,700,790,890,990,1100,1250,1430,1550,1640,1750,1940,2050,2200,2300,2480,2700 };
@@ -96,7 +96,7 @@ private:
 	float KL_D[15] = { 0.82,0.86,0.87,0.90,0.91,0.94,0.97,0.99,1.02,1.05,1.08,1.13,1.16,1.19,1.21 };
 	int Ld_E[11] = { 4660,5040,5420,6100,6850,7650,9150,12230,13750,15280,16800 };
 	float KL_E[11] = { 0.91,0.92,0.94,0.96,0.99,1.01,1.05,1.11,1.15,1.17,1.19 };
-	//´ø³¤ĞŞÕıÏµÊıË÷Òı³ÌĞòKL;
+	//å¸¦é•¿ä¿®æ­£ç³»æ•°ç´¢å¼•ç¨‹åºKL;
 	float KL_Indexer(int Ld, string Type) {
 		if (PSET.Type == "Z") {
 			for (int i = 0; i < 11; ++i)if (Ld_Z[i] == Ld)return KL_Z[i];
@@ -113,22 +113,22 @@ private:
 		}
 	}
 
-	//µ¥¸ùÆÕÍ¨V´øµÄ»ù±¾¶î¶¨¹¦ÂÊP0;
-	//Ë÷ÒıÍ·¿é;
+	//å•æ ¹æ™®é€šVå¸¦çš„åŸºæœ¬é¢å®šåŠŸç‡P0;
+	//ç´¢å¼•å¤´å—;
 	int Index_SmallWheelRotatingSpeed[10] = { 400,700,800,950,1200,1450,1600,2000,2400,2800 };
 	int Index_WheelBenchmarkDiameter_Z[6] = { 50,56,63,71,80,90 };
 	int Index_WheelBenchmarkDiameter_A[8] = { 75,90,100,112,125,140,160,180 };
 	int Index_WheelBenchmarkDiameter_B[8] = { 125,140,160,180,200,224,250,280 };
 	int Index_WheelBenchmarkDiameter_C[8] = { 200,224,250,280,315,355,400,450 };
 	int Index_WheelBenchmarkDiameter_D[8] = { 355,400,450,500,560,630,710,800 };
-	//Z¿é;
+	//Zå—;
 	float Z50[10] = { 0.06,0.09,0.10,0.12,0.14,0.16,0.17,0.20,0.22,0.26 };
 	float Z56[10] = { 0.06,0.11,0.12,0.14,0.17,0.19,0.20,0.25,0.30,0.33 };
 	float Z63[10] = { 0.08,0.13,0.15,0.18,0.22,0.25,0.27,0.32,0.37,0.41 };
 	float Z71[10] = { 0.09,0.17,0.20,0.23,0.27,0.30,0.33,0.39,0.46,0.50 };
 	float Z80[10] = { 0.14,0.20,0.22,0.26,0.30,0.35,0.39,0.44,0.50,0.56 };
 	float Z90[10] = { 0.14,0.22,0.24,0.28,0.33,0.36,0.40,0.48,0.54,0.60 };
-	//A¿é;
+	//Aå—;
 	float A75[10] = { 0.26,0.40,0.45,0.51,0.60,0.68,0.73,0.84,0.92,1.00 };
 	float A90[10] = { 0.39,0.61,0.68,0.77,0.93,1.07,1.15,1.34,1.50,1.64 };
 	float A100[10] = { 0.47,0.74,0.83,0.95,1.14,1.32,1.42,1.66,1.87,2.05 };
@@ -137,7 +137,7 @@ private:
 	float A140[10] = { 0.78,1.26,1.41,1.62,1.96,2.28,2.45,2.87,3.22,3.48 };
 	float A160[10] = { 0.94,1.51,1.69,1.95,2.36,2.73,2.94,3.42,3.80,4.06 };
 	float A180[10] = { 1.09,1.76,1.97,2.27,2.74,3.16,3.40,3.93,4.32,4.54 };
-	//B¿é;
+	//Bå—;
 	float B125[10] = { 0.84,1.30,1.44,1.64,1.93,2.19,2.33,2.64,2.85,2.96 };
 	float B140[10] = { 1.05,1.64,1.82,2.08,2.47,2.82,3.00,3.42,3.70,3.85 };
 	float B160[10] = { 1.32,2.09,2.32,2.66,3.17,3.62,3.86,4.40,4.75,4.89 };
@@ -146,7 +146,7 @@ private:
 	float B224[10] = { 2.17,3.47,3.86,4.42,5.26,5.97,6.33,7.02,7.25,6.95 };
 	float B250[10] = { 2.50,4.00,4.46,5.10,6.04,6.82,7.20,7.87,7.89,7.14 };
 	float B280[10] = { 2.89,4.61,5.13,5.85,6.90,7.76,8.13,8.60,8.22,6.80 };
-	//C¿é;
+	//Cå—;
 	float C200[10] = { 2.41,3.69,4.07,4.58,5.29,5.84,6.07,6.34,6.02,5.01 };
 	float C224[10] = { 2.99,4.64,5.12,5.78,6.71,7.45,7.75,8.06,7.57,6.08 };
 	float C250[10] = { 3.62,5.64,6.23,7.04,8.21,9.04,9.38,9.62,8.75,6.56 };
@@ -155,7 +155,7 @@ private:
 	float C355[9] = { 6.05,9.50,10.46,11.73,13.31,14.12,14.19,12.59,7.98 };
 	float C400[9] = { 7.06,11.02,12.10,13.48,15.04,15.53,15.24,11.95,4.34 };
 	float C450[8] = { 8.20,12.63,13.80,15.23,16.59,16.47,15.57,9.64 };
-	//D¿é;
+	//Då—;
 	float D355[7] = { 9.24,13.70,14.83,16.15,17.25,16.77,15.63 };
 	float D400[7] = { 11.45,17.07,18.46,20.06,21.20,20.15,18.31 };
 	float D450[7] = { 13.85,20.63,22.25,24.01,24.84,22.02,19.59 };
@@ -164,13 +164,13 @@ private:
 	float D630[7] = { 22.05,31.68,33.38,34.19,30.15,18.06,6.25 };
 	float D710[6] = { 25.45,35.59,36.87,36.35,27.88,7.99 };
 	float D800[5] = { 29.08,39.14,39.55,36.6,21.32 };
-	//P0±í¸ñË÷Òı³ÌĞò;
+	//P0è¡¨æ ¼ç´¢å¼•ç¨‹åº;
 	float P0_Indexer(int WheelBenchmarkDiameter1, double SmallWheelRotatingSpeed, string Type) {
-		int Y = 0;//±í¸ñÁĞÖ¸ÕëÎ»ÖÃ;
+		int Y = 0;//è¡¨æ ¼åˆ—æŒ‡é’ˆä½ç½®;
 
-		//Éè¼Æ×ªËÙÆ¥Åä×î½üµÄ»ù×¼×ªËÙ;
+		//è®¾è®¡è½¬é€ŸåŒ¹é…æœ€è¿‘çš„åŸºå‡†è½¬é€Ÿ;
 		int Index_RotatingSpeed = StaticGetNearestElement(Index_SmallWheelRotatingSpeed, SmallWheelRotatingSpeed, 10);
-		//»ñÈ¡ÁĞÎ»ÖÃ;
+		//è·å–åˆ—ä½ç½®;
 		if (Index_RotatingSpeed == 400) {
 			Y = 0;
 		} else if (Index_RotatingSpeed == 700) {
@@ -193,13 +193,13 @@ private:
 			Y = 9;
 		}
 
-		//Ğ¡´øÂÖÊµ¼ÊÖ±¾¶Æ¥Åä×î½üµÄ»ù×¼Ö±¾¶;
+		//å°å¸¦è½®å®é™…ç›´å¾„åŒ¹é…æœ€è¿‘çš„åŸºå‡†ç›´å¾„;
 		int Index_BenchmarkDiameter = NULL;
-		//Æ¥Åä¿éÎ»ÖÃ;
+		//åŒ¹é…å—ä½ç½®;
 		if (Type == "Z") {
 			Index_BenchmarkDiameter = StaticGetNearestElement(Index_WheelBenchmarkDiameter_Z, WheelBenchmarkDiameter1, 6);
 
-			//Æ¥ÅäĞĞÎ»ÖÃ;
+			//åŒ¹é…è¡Œä½ç½®;
 			if (Index_BenchmarkDiameter == 50) {
 				return Z50[Y];
 			} else if (Index_BenchmarkDiameter == 56) {
@@ -216,7 +216,7 @@ private:
 		} else if (Type == "A") {
 			Index_BenchmarkDiameter = StaticGetNearestElement(Index_WheelBenchmarkDiameter_A, WheelBenchmarkDiameter1, 8);
 
-			//Æ¥ÅäĞĞÎ»ÖÃ;
+			//åŒ¹é…è¡Œä½ç½®;
 			if (Index_BenchmarkDiameter == 75) {
 				return A75[Y];
 			} else if (Index_BenchmarkDiameter == 90) {
@@ -237,7 +237,7 @@ private:
 		} else if (Type == "B") {
 			Index_BenchmarkDiameter = StaticGetNearestElement(Index_WheelBenchmarkDiameter_B, WheelBenchmarkDiameter1, 8);
 
-			//Æ¥ÅäĞĞÎ»ÖÃ;
+			//åŒ¹é…è¡Œä½ç½®;
 			if (Index_BenchmarkDiameter == 125) {
 				return B125[Y];
 			} else if (Index_BenchmarkDiameter == 140) {
@@ -258,7 +258,7 @@ private:
 		} else if (Type == "C") {
 			Index_BenchmarkDiameter = StaticGetNearestElement(Index_WheelBenchmarkDiameter_C, WheelBenchmarkDiameter1, 8);
 
-			//Æ¥ÅäĞĞÎ»ÖÃ;
+			//åŒ¹é…è¡Œä½ç½®;
 			if (Index_BenchmarkDiameter == 200) {
 				return C200[Y];
 			} else if (Index_BenchmarkDiameter == 224) {
@@ -279,7 +279,7 @@ private:
 		} else if (Type == "D") {
 			Index_BenchmarkDiameter = StaticGetNearestElement(Index_WheelBenchmarkDiameter_D, WheelBenchmarkDiameter1, 8);
 
-			//Æ¥ÅäĞĞÎ»ÖÃ;
+			//åŒ¹é…è¡Œä½ç½®;
 			if (Index_BenchmarkDiameter == 355) {
 				return D355[Y];
 			} else if (Index_BenchmarkDiameter == 400) {
@@ -303,9 +303,9 @@ private:
 		return NULL;
 	}
 
-	//µ¥¸ùÆÕÍ¨V´ø¶î¶¨¹¦ÂÊµÄÔöÁ¿DeltaP0;
+	//å•æ ¹æ™®é€šVå¸¦é¢å®šåŠŸç‡çš„å¢é‡DeltaP0;
 	DoublePOINT Index_TransmissionRatio[10] = { {1.00,1.01},{1.02,1.04},{1.05,1.08},{1.09,1.12},{1.13,1.18},{1.19,1.24},{1.25,1.34},{1.35,1.50},{1.51,1.99},{2.00,INT_MAX} };
-	//Z¿é;
+	//Zå—;
 	float Z100D[10] = { 0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00 };
 	float Z102D[10] = { 0.00,0.00,0.00,0.00,0.00,0.00,0.01,0.01,0.01,0.01 };
 	float Z105D[10] = { 0.00,0.00,0.00,0.00,0.01,0.01,0.01,0.01,0.02,0.02 };
@@ -316,7 +316,7 @@ private:
 	float Z135D[10] = { 0.00,0.01,0.01,0.02,0.02,0.02,0.02,0.03,0.03,0.04 };
 	float Z151D[10] = { 0.01,0.01,0.02,0.02,0.02,0.02,0.03,0.03,0.04,0.04 };
 	float Z200D[10] = { 0.01,0.02,0.02,0.02,0.03,0.03,0.03,0.04,0.04,0.04 };
-	//A¿é;
+	//Aå—;
 	float A100D[10] = { 0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00 };
 	float A102D[10] = { 0.01,0.01,0.01,0.01,0.02,0.02,0.02,0.03,0.03,0.04 };
 	float A105D[10] = { 0.01,0.02,0.02,0.03,0.03,0.04,0.04,0.06,0.07,0.08 };
@@ -327,7 +327,7 @@ private:
 	float A135D[10] = { 0.04,0.07,0.08,0.08,0.11,0.13,0.15,0.19,0.23,0.26 };
 	float A151D[10] = { 0.04,0.08,0.09,0.10,0.13,0.15,0.17,0.22,0.26,0.30 };
 	float A200D[10] = { 0.05,0.09,0.10,0.11,0.15,0.17,0.19,0.24,0.29,0.34 };
-	//B¿é;
+	//Bå—;
 	float B100D[10] = { 0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00 };
 	float B102D[10] = { 0.01,0.02,0.03,0.03,0.04,0.05,0.06,0.07,0.08,0.10 };
 	float B105D[10] = { 0.03,0.05,0.06,0.07,0.08,0.10,0.11,0.14,0.17,0.20 };
@@ -338,7 +338,7 @@ private:
 	float B135D[10] = { 0.10,0.17,0.20,0.23,0.30,0.36,0.39,0.49,0.59,0.69 };
 	float B151D[10] = { 0.11,0.20,0.23,0.26,0.34,0.40,0.45,0.56,0.68,0.79 };
 	float B200D[10] = { 0.13,0.22,0.25,0.30,0.38,0.46,0.51,0.63,0.76,0.89 };
-	//C¿é;
+	//Cå—;
 	float C100D[10] = { 0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00 };
 	float C102D[10] = { 0.04,0.07,0.08,0.09,0.12,0.14,0.16,0.20,0.23,0.27 };
 	float C105D[10] = { 0.08,0.14,0.16,0.19,0.24,0.28,0.31,0.39,0.47,0.55 };
@@ -349,7 +349,7 @@ private:
 	float C135D[10] = { 0.27,0.48,0.55,0.65,0.82,0.99,1.10,1.37,1.65,1.92 };
 	float C151D[10] = { 0.31,0.55,0.63,0.74,0.94,1.14,1.25,1.57,1.88,2.19 };
 	float C200D[10] = { 0.35,0.62,0.71,0.83,1.06,1.27,1.41,1.76,2.12,2.47 };
-	//D¿é;
+	//Då—;
 	float D100D[7] = { 0.00,0.00,0.00,0.00,0.00,0.00,0.00 };
 	float D102D[7] = { 0.14,0.24,0.28,0.33,0.42,0.51,0.56 };
 	float D105D[7] = { 0.28,0.49,0.56,0.66,0.84,1.01,1.11 };
@@ -360,13 +360,13 @@ private:
 	float D135D[7] = { 0.97,1.70,1.95,2.31,2.92,3.52,3.89 };
 	float D151D[7] = { 1.11,1.95,2.22,2.64,3.34,4.03,4.45 };
 	float D200D[7] = { 1.25,2.19,2.50,2.97,3.75,4.53,5.00 };
-	//DeltaP0±í¸ñË÷Òı³ÌĞò;
+	//DeltaP0è¡¨æ ¼ç´¢å¼•ç¨‹åº;
 	float DeltaP0_Indexer(double RealTransmissionRatio, double SmallWheelRotatingSpeed, string Type) {
-		int X = 0, Y = 0;//±í¸ñÖ¸ÕëÎ»ÖÃ;
+		int X = 0, Y = 0;//è¡¨æ ¼æŒ‡é’ˆä½ç½®;
 
-		//Éè¼Æ×ªËÙÆ¥Åä×î½üµÄ»ù×¼×ªËÙ;
+		//è®¾è®¡è½¬é€ŸåŒ¹é…æœ€è¿‘çš„åŸºå‡†è½¬é€Ÿ;
 		int Index_RotatingSpeed = StaticGetNearestElement(Index_SmallWheelRotatingSpeed, SmallWheelRotatingSpeed, 10);
-		//»ñÈ¡ÁĞÎ»ÖÃ;
+		//è·å–åˆ—ä½ç½®;
 		if (Index_RotatingSpeed == 400) {
 			Y = 0;
 		} else if (Index_RotatingSpeed == 700) {
@@ -389,10 +389,10 @@ private:
 			Y = 9;
 		}
 
-		//Æ¥Åä´«¶¯±È(»ñÈ¡¿éÖĞµÄĞĞÖ¸ÕëÎ»ÖÃ);
+		//åŒ¹é…ä¼ åŠ¨æ¯”(è·å–å—ä¸­çš„è¡ŒæŒ‡é’ˆä½ç½®);
 		for (int i = 0; i < 10; ++i) if (RealTransmissionRatio >= Index_TransmissionRatio[i].x && RealTransmissionRatio <= Index_TransmissionRatio[i].y)X = i;
 
-		//Æ¥Åä¿éÎ»ÖÃ;
+		//åŒ¹é…å—ä½ç½®;
 		if (Type == "Z") {
 			if (X == 0)return Z100D[Y];
 			if (X == 1)return Z102D[Y];
@@ -454,23 +454,23 @@ private:
 		return NULL;
 	}
 
-	//°ü½ÇĞŞÕıÏµÊıKa;
+	//åŒ…è§’ä¿®æ­£ç³»æ•°Ka;
 	int BaseWrapAngle[13] = { 120,125,130,135,140,145,150,155,160,165,170,175,180 };
 	float WrapAngleFix[13] = { 0.82,0.84,0.86,0.88,0.89,0.91,0.92,0.93,0.95,0.96,0.98,0.99,1.00 };
-	//KaË÷Òı³ÌĞò;
+	//Kaç´¢å¼•ç¨‹åº;
 	float WrapAngleFix_Indexer(double SmallWheelWrapAngle) {
 		for (int i = 0; i < 13; ++i) if (StaticGetNearestElement(BaseWrapAngle, SmallWheelWrapAngle, 13) == BaseWrapAngle[i])return WrapAngleFix[i];
 		return NULL;
 	}
 
-	//V´øÂÖ²ÛÑ¡ĞÍ±í(Bd, Hamin, Hfmin, e, Fmin, Delta_min);
+	//Vå¸¦è½®æ§½é€‰å‹è¡¨(Bd, Hamin, Hfmin, e, Fmin, Delta_min);
 	float Z_Notch[6] = { 8.5,2.0,7.0,12,7,5.5 };
 	float A_Notch[6] = { 11.0,2.75,8.7,15,9,6 };
 	float B_Notch[6] = { 14.0,3.50,10.8,19,11.5,7.5 };
 	float C_Notch[6] = { 19.0,4.80,14.3,25.5,16,10 };
 	float D_Notch[6] = { 27.0,8.10,19.9,37,23,12 };
 	float E_Notch[6] = { 32.0,9.60,23.4,44.5,28,15 };
-	//V´øÂÖ²ÛÑ¡ĞÍ±íË÷Òı³ÌĞò;
+	//Vå¸¦è½®æ§½é€‰å‹è¡¨ç´¢å¼•ç¨‹åº;
 	vector<float> WheelNotch_Indexer(int WheelDiameter, string Type) {
 		vector<float> WheelNotch;
 		if (Type == "Z") {
@@ -495,16 +495,16 @@ private:
 		return WheelNotch;
 	}
 
-	//V´øÂÖµÄ½á¹¹ĞÎÊ½ºÍ·ø°åºñ¶ÈÑ¡ĞÍ±í;
-	//Öá¿×¾¶ÏµÁĞË÷Òı¿é;
+	//Vå¸¦è½®çš„ç»“æ„å½¢å¼å’Œè¾æ¿åšåº¦é€‰å‹è¡¨;
+	//è½´å­”å¾„ç³»åˆ—ç´¢å¼•å—;
 	POINT Index_Zd[6] = { {12,14},{16,18},{20,22},{24,25},{28,30},{32,35} };
 	POINT Index_Ad[7] = { {10,18},{20,22},{24,25},{28,30},{32,35},{38,40},{42,45} };
 	POINT Index_Bd[5] = { {32,35},{38,40},{42,45},{50,55},{60,65} };
 	POINT Index_Cd[5] = { {42,45},{50,55},{60,65},{70,75},{80,85} };
 	POINT Index_Dd[5] = { {60,65},{70,75},{80,85},{90,95},{100,110} };
 	POINT Index_Ed[5] = { {80,85},{90,95},{100,110},{120,130},{140,150} };
-	//ÂÖ½á¹¹Ë÷Òı¿é;
-	//ÊµĞÄ:S; ¸¹°å:W; ¿×°å:O; ÂÖ·ø:P;
+	//è½®ç»“æ„ç´¢å¼•å—;
+	//å®å¿ƒ:S; è…¹æ¿:W; å­”æ¿:O; è½®è¾:P;
 	/*int D63[33] = {S,S};
 	int D71[33] = { S,S,S };
 	int D75[33] = { S,S,S,S };
@@ -548,7 +548,7 @@ private:
 	int D2500[33] = {};*/
 
 private:
-	//¼ÆËã¿ÕĞÄÔ²ÖùÌåÌå»ı(mm^3);
+	//è®¡ç®—ç©ºå¿ƒåœ†æŸ±ä½“ä½“ç§¯(mm^3);
 	double HollowCylinder(double D, double d, double h) { return PI * h / 4 * (pow(D, 2) - pow(d, 2)); }
 
 	int getNearest(int x, int y, double target) { if (target - x >= y - target)return y; else return x; }
@@ -589,8 +589,8 @@ private:
 	}
 
 	void AutoWheelBenchmarkDiameter() {
-		//¸ù¾İ´øĞÍÑ¡ÔñĞ¡´øÂÖ»ù×¼Ö±¾¶;
-		//ÑéËãĞ¡´øÂÖ´øËÙ¶È,ÅÅ³ı²»·ûºÏ´øËÙÌõ¼şµÄĞ¡´øÂÖ»ù×¼Ö±¾¶;
+		//æ ¹æ®å¸¦å‹é€‰æ‹©å°å¸¦è½®åŸºå‡†ç›´å¾„;
+		//éªŒç®—å°å¸¦è½®å¸¦é€Ÿåº¦,æ’é™¤ä¸ç¬¦åˆå¸¦é€Ÿæ¡ä»¶çš„å°å¸¦è½®åŸºå‡†ç›´å¾„;
 		if (PSET.Type == "Z") {
 			for (int i = 0; i < 24; ++i) {
 				double BeltVelocity = (PI * WheelBenchmarkDiameter_Z[i] * PSET.SmallWheelRotatingSpeed) / 60000;
@@ -623,42 +623,42 @@ private:
 			}
 		}
 
-		//¼ÆËã²¢Ô²Õû´ó´øÂÖ»ù×¼Ö±¾¶;
+		//è®¡ç®—å¹¶åœ†æ•´å¤§å¸¦è½®åŸºå‡†ç›´å¾„;
 		vector<int> WheelBenchmarkDiameter1_TEMP;
 		for (int i = 0; i < Belt.WheelBenchmarkDiameter1.size(); ++i) {
 			double Dd2 = getNearestElement(Belt.WheelBenchmarkDiameter1, PSET.ImagTransmissionRatio * Belt.WheelBenchmarkDiameter1[i] * (1 - PSET.Epsilon));
 
-			//±£Ö¤Êµ¼Ê´«¶¯±ÈÔÚ¿É½ÓÊÜµÄ·¶Î§ÄÚ;
-			double RealTransmissionRatio = Dd2 / Belt.WheelBenchmarkDiameter1[i];					//¼ÆËãÊµ¼Ê´«¶¯±È;
-			double ToleranceValue = PSET.ImagTransmissionRatio * PSET.TransmissionRatioTolerance;	//¼ÆËã´«¶¯±ÈÈİĞíµÄÎó²îÖµ;
+			//ä¿è¯å®é™…ä¼ åŠ¨æ¯”åœ¨å¯æ¥å—çš„èŒƒå›´å†…;
+			double RealTransmissionRatio = Dd2 / Belt.WheelBenchmarkDiameter1[i];					//è®¡ç®—å®é™…ä¼ åŠ¨æ¯”;
+			double ToleranceValue = PSET.ImagTransmissionRatio * PSET.TransmissionRatioTolerance;	//è®¡ç®—ä¼ åŠ¨æ¯”å®¹è®¸çš„è¯¯å·®å€¼;
 
 			if (RealTransmissionRatio >= PSET.ImagTransmissionRatio - ToleranceValue && RealTransmissionRatio <= PSET.ImagTransmissionRatio + ToleranceValue) {
-				Belt.WheelBenchmarkDiameter2.push_back(Dd2);							//Êµ¼Ê´«¶¯±È¿ÉĞĞµÄ´ó´øÂÖ»ù×¼Ö±¾¶;
-				WheelBenchmarkDiameter1_TEMP.push_back(Belt.WheelBenchmarkDiameter1[i]);//Êµ¼Ê´«¶¯±È¿ÉĞĞµÄĞ¡´øÂÖ»ù×¼Ö±¾¶;
+				Belt.WheelBenchmarkDiameter2.push_back(Dd2);							//å®é™…ä¼ åŠ¨æ¯”å¯è¡Œçš„å¤§å¸¦è½®åŸºå‡†ç›´å¾„;
+				WheelBenchmarkDiameter1_TEMP.push_back(Belt.WheelBenchmarkDiameter1[i]);//å®é™…ä¼ åŠ¨æ¯”å¯è¡Œçš„å°å¸¦è½®åŸºå‡†ç›´å¾„;
 			}
 		}
 
-		//ÓÃÊµ¼Ê´«¶¯±È¿ÉĞĞµÄĞ¡´øÂÖ»ù×¼Ö±¾¶Ìæ»»µôÔ­±¾µÄĞ¡´øÂÖ»ù×¼Ö±¾¶;
+		//ç”¨å®é™…ä¼ åŠ¨æ¯”å¯è¡Œçš„å°å¸¦è½®åŸºå‡†ç›´å¾„æ›¿æ¢æ‰åŸæœ¬çš„å°å¸¦è½®åŸºå‡†ç›´å¾„;
 		Belt.WheelBenchmarkDiameter1.clear();
 		for (int i = 0; i < WheelBenchmarkDiameter1_TEMP.size(); ++i) Belt.WheelBenchmarkDiameter1.push_back(WheelBenchmarkDiameter1_TEMP[i]);
 	}
 
 	void AutoBeltGeometricParameters(double Accuracy = 20) {
 		for (int i = 0; i < Belt.WheelBenchmarkDiameter1.size(); ++i) {
-			//³õ¶¨Á½ÂÖÖĞĞÄ¾à;
-			double WheelDiameterSum = Belt.WheelBenchmarkDiameter1[i] + Belt.WheelBenchmarkDiameter2[i];		//¼ÆËãÁ½ÂÖÖ±¾¶ºÍ;
-			double WheelDiameterDiff = Belt.WheelBenchmarkDiameter2[i] - Belt.WheelBenchmarkDiameter1[i];		//¼ÆËãÁ½ÂÖÖ±¾¶²î;
+			//åˆå®šä¸¤è½®ä¸­å¿ƒè·;
+			double WheelDiameterSum = Belt.WheelBenchmarkDiameter1[i] + Belt.WheelBenchmarkDiameter2[i];		//è®¡ç®—ä¸¤è½®ç›´å¾„å’Œ;
+			double WheelDiameterDiff = Belt.WheelBenchmarkDiameter2[i] - Belt.WheelBenchmarkDiameter1[i];		//è®¡ç®—ä¸¤è½®ç›´å¾„å·®;
 
-			//¼ÆËãÊµ¼Ê´«¶¯±È;
+			//è®¡ç®—å®é™…ä¼ åŠ¨æ¯”;
 			double RealTransmissionRatio = double(Belt.WheelBenchmarkDiameter2[i]) / double(Belt.WheelBenchmarkDiameter1[i]);
-			//²é±í->µ¥¸ùÆÕÍ¨V´ø¶î¶¨¹¦ÂÊµÄÔöÁ¿DeltaP0;
+			//æŸ¥è¡¨->å•æ ¹æ™®é€šVå¸¦é¢å®šåŠŸç‡çš„å¢é‡DeltaP0;
 			float DeltaP0 = DeltaP0_Indexer(RealTransmissionRatio, PSET.SmallWheelRotatingSpeed, PSET.Type);
 
 			for (double RoughWheelbase = 0.7 * WheelDiameterSum; RoughWheelbase < 2 * WheelDiameterSum; RoughWheelbase += Accuracy) {
-				double ImagBeltLength = 2 * RoughWheelbase + (PI * 0.5) * WheelDiameterSum + pow(WheelDiameterDiff, 2) / (4 * RoughWheelbase);	//¼ÆËãÀíÂÛ´ø³¤;
+				double ImagBeltLength = 2 * RoughWheelbase + (PI * 0.5) * WheelDiameterSum + pow(WheelDiameterDiff, 2) / (4 * RoughWheelbase);	//è®¡ç®—ç†è®ºå¸¦é•¿;
 
-				//¸ù¾İÀíÂÛ´ø³¤²éÕÒ»ù×¼´ø³¤;
-				int RealBeltLength = NULL;	//´¢´æÑ¡³öµÄ´ø»ù×¼³¤¶È(Ò²ÊÇÊµ¼Ê´ø³¤);
+				//æ ¹æ®ç†è®ºå¸¦é•¿æŸ¥æ‰¾åŸºå‡†å¸¦é•¿;
+				int RealBeltLength = NULL;	//å‚¨å­˜é€‰å‡ºçš„å¸¦åŸºå‡†é•¿åº¦(ä¹Ÿæ˜¯å®é™…å¸¦é•¿);
 				if (PSET.Type == "Z") {
 					RealBeltLength = StaticGetNearestElement(Ld_Z, ImagBeltLength, 11);
 				} else if (PSET.Type == "A") {
@@ -673,93 +673,108 @@ private:
 					RealBeltLength = StaticGetNearestElement(Ld_E, ImagBeltLength, 11);
 				}
 
-				//¼ÆËãÊµ¼ÊÖĞĞÄ¾à;
+				//è®¡ç®—å®é™…ä¸­å¿ƒè·;
 				double _RealWheelbase = RoughWheelbase + (RealBeltLength - ImagBeltLength) * 0.5;
 
-				//ÑéËãĞ¡´øÂÖ°ü½Ç;
+				//éªŒç®—å°å¸¦è½®åŒ…è§’;
 				double WrapAngle = 180 - WheelDiameterDiff * (57.29578 / _RealWheelbase);
 
-				//¼ÆËãÊµ¼Ê´øËÙ;
+				//è®¡ç®—å®é™…å¸¦é€Ÿ;
 				double _RealBeltSpeed = (PI * Belt.WheelBenchmarkDiameter1[i] * PSET.SmallWheelRotatingSpeed) / 60000;
 
-				//È·¶¨´øµÄÌõÊız;
-				float P0 = P0_Indexer(Belt.WheelBenchmarkDiameter1[i], PSET.SmallWheelRotatingSpeed, PSET.Type);	//²é±í->µ¥¸ùÆÕÍ¨V´øµÄ»ù±¾¶î¶¨¹¦ÂÊP0;
-				float Ka = WrapAngleFix_Indexer(WrapAngle);			//²é±í->°ü½ÇĞŞÕıÏµÊıKa;
-				float KL = KL_Indexer(RealBeltLength, PSET.Type);	//²é±í->´ø³¤ĞŞÕıÏµÊıKL
+				//ç¡®å®šå¸¦çš„æ¡æ•°z;
+				float P0 = P0_Indexer(Belt.WheelBenchmarkDiameter1[i], PSET.SmallWheelRotatingSpeed, PSET.Type);	//æŸ¥è¡¨->å•æ ¹æ™®é€šVå¸¦çš„åŸºæœ¬é¢å®šåŠŸç‡P0;
+				float Ka = WrapAngleFix_Indexer(WrapAngle);			//æŸ¥è¡¨->åŒ…è§’ä¿®æ­£ç³»æ•°Ka;
+				float KL = KL_Indexer(RealBeltLength, PSET.Type);	//æŸ¥è¡¨->å¸¦é•¿ä¿®æ­£ç³»æ•°KL
 				double Z = (PSET.KA * PSET.NominalPower) / ((P0 + DeltaP0) * Ka * KL);
 
-				//±£´æ×îÖÕ½á¹û;
+				//ä¿å­˜æœ€ç»ˆç»“æœ;
 				if (WrapAngle >= PSET.MinWrapAngle && Z < 10) {
-					Belt.Result.SmallWheelDiameter.push_back(Belt.WheelBenchmarkDiameter1[i]);	//´¢´æĞ¡´øÂÖÖ±¾¶;
-					Belt.Result.BigWheelDiameter.push_back(Belt.WheelBenchmarkDiameter2[i]);	//´¢´æ´ó´øÂÖÖ±¾¶;
-					Belt.Result.TransmissionRatio.push_back(RealTransmissionRatio);				//´¢´æ´«¶¯±È;
-					Belt.Result.RealBeltLength.push_back(RealBeltLength);						//´¢´æ´øµÄ»ù×¼³¤¶È;
-					Belt.Result.RealWheelbase.push_back(_RealWheelbase);						//´¢´æÊµ¼ÊÖĞĞÄ¾Ø;
-					Belt.Result.SmallWheelWrapAngle.push_back(WrapAngle);						//´¢´æĞ¡´øÂÖ°ü½Ç;
-					Belt.Result.RealBeltSpeed.push_back(_RealBeltSpeed);						//´¢´æÊµ¼Ê´øËÙ;
-					Belt.Result.BeltNumber_Z.push_back(round(Z));								//´¢´æ´øµÄ¸ùÊı;
+					Belt.Result.SmallWheelDiameter.push_back(Belt.WheelBenchmarkDiameter1[i]);	//å‚¨å­˜å°å¸¦è½®ç›´å¾„;
+					Belt.Result.BigWheelDiameter.push_back(Belt.WheelBenchmarkDiameter2[i]);	//å‚¨å­˜å¤§å¸¦è½®ç›´å¾„;
+					Belt.Result.TransmissionRatio.push_back(RealTransmissionRatio);				//å‚¨å­˜ä¼ åŠ¨æ¯”;
+					Belt.Result.RealBeltLength.push_back(RealBeltLength);						//å‚¨å­˜å¸¦çš„åŸºå‡†é•¿åº¦;
+					Belt.Result.RealWheelbase.push_back(_RealWheelbase);						//å‚¨å­˜å®é™…ä¸­å¿ƒçŸ©;
+					Belt.Result.SmallWheelWrapAngle.push_back(WrapAngle);						//å‚¨å­˜å°å¸¦è½®åŒ…è§’;
+					Belt.Result.RealBeltSpeed.push_back(_RealBeltSpeed);						//å‚¨å­˜å®é™…å¸¦é€Ÿ;
+					Belt.Result.BeltNumber_Z.push_back(round(Z));								//å‚¨å­˜å¸¦çš„æ ¹æ•°;
 				}
 			}
 		}
 	}
 
 	void AutoWheelStruct() {
+		//å®å¿ƒè½®æ²¡æœ‰è…¹æ¿,è¿™é‡Œå¯¹è…¹æ¿æ•°æ®è¿›è¡Œä¿®æ­£(å£°æ˜ä¿®æ­£æ•°æ®çš„ä¸´æ—¶å‚¨å­˜æ–‡ä»¶);
+		vector<DoublePOINT> SmallWebThickness_TEMP;			//å°è½®è…¹æ¿åšåº¦C';
+		vector<DoublePOINT> BigWebThickness_TEMP;			//å¤§è½®è…¹æ¿åšåº¦C';
+
 		for (int i = 0; i < Belt.Result.SmallWheelDiameter.size(); ++i) {
-			//¼ÆËãÂÖÔµÄÚ¾¶D1(Ğ¡ÂÖ,´óÂÖ)
+			//è®¡ç®—è½®ç¼˜å†…å¾„D1(å°è½®,å¤§è½®)
 			Wheel.WheelRimINDameter.push_back({ Wheel.MinWheelOutsideDameter[i].x - 2 * Wheel.WheelRimThick.x, Wheel.MinWheelOutsideDameter[i].y - 2 * Wheel.WheelRimThick.y });
 
-			//Ğ¡´øÂÖ½á¹¹ĞÎÊ½Ñ¡ĞÍ;
-			if (Belt.Result.SmallWheelDiameter[i] <= 2.5 * PSET.SmallWheelAxleDameter) {
-				Wheel.SmallWheelStruct.push_back("ÊµĞÄ");
-			} else if (Belt.Result.SmallWheelDiameter[i] <= 300) {
-				if (Wheel.WheelRimINDameter[i].x - Wheel.WheelHubDameter.x >= 100)Wheel.SmallWheelStruct.push_back("¿×°å"); else Wheel.SmallWheelStruct.push_back("¸¹°å");
-			} else if (Belt.Result.SmallWheelDiameter[i] > 300) {
-				Wheel.SmallWheelStruct.push_back("ÂÖ·ø");
-			}
+			////å°å¸¦è½®ç»“æ„å½¢å¼é€‰å‹;
+			//if (Belt.Result.SmallWheelDiameter[i] <= 2.5 * PSET.SmallWheelAxleDameter) {
+			//	Wheel.SmallWheelStruct.push_back("å®å¿ƒ");
+			//} else if (Belt.Result.SmallWheelDiameter[i] <= 300) {
+			//	if (Wheel.WheelRimINDameter[i].x - Wheel.WheelHubDameter.x >= 100)Wheel.SmallWheelStruct.push_back("å­”æ¿"); else Wheel.SmallWheelStruct.push_back("è…¹æ¿");
+			//} else if (Belt.Result.SmallWheelDiameter[i] > 300) {
+			//	Wheel.SmallWheelStruct.push_back("è½®è¾");
+			//}
 
-			//´ó´øÂÖ½á¹¹ĞÎÊ½Ñ¡ĞÍ;
-			if (Belt.Result.BigWheelDiameter[i] <= 2.5 * PSET.BigWheelAxleDameter) {
-				Wheel.BigWheelStruct.push_back("ÊµĞÄ");
-			} else if (Belt.Result.BigWheelDiameter[i] <= 300) {
-				if (Wheel.WheelRimINDameter[i].y - Wheel.WheelHubDameter.y >= 100)Wheel.BigWheelStruct.push_back("¿×°å"); else Wheel.BigWheelStruct.push_back("¸¹°å");
-			} else if (Belt.Result.BigWheelDiameter[i] > 300) {
-				Wheel.BigWheelStruct.push_back("ÂÖ·ø");
-			}
+			////å¤§å¸¦è½®ç»“æ„å½¢å¼é€‰å‹;
+			//if (Belt.Result.BigWheelDiameter[i] <= 2.5 * PSET.BigWheelAxleDameter) {
+			//	Wheel.BigWheelStruct.push_back("å®å¿ƒ");
+			//} else if (Belt.Result.BigWheelDiameter[i] <= 300) {
+			//	if (Wheel.WheelRimINDameter[i].y - Wheel.WheelHubDameter.y >= 100)Wheel.BigWheelStruct.push_back("å­”æ¿"); else Wheel.BigWheelStruct.push_back("è…¹æ¿");
+			//} else if (Belt.Result.BigWheelDiameter[i] > 300) {
+			//	Wheel.BigWheelStruct.push_back("è½®è¾");
+			//}
 
-			//Wheel.SmallWheelStruct.push_back("ÊµĞÄ");
-			//Wheel.BigWheelStruct.push_back("¿×°å");
+			Wheel.SmallWheelStruct.push_back("å®å¿ƒ");
+			Wheel.BigWheelStruct.push_back("å­”æ¿");
 
-			if (Wheel.SmallWheelStruct[i] == "ÊµĞÄ")Wheel.SmallWebThickness.clear();
-			if (Wheel.BigWheelStruct[i] == "ÊµĞÄ")Wheel.BigWebThickness.clear();
+			//å®å¿ƒè½®æ²¡æœ‰è…¹æ¿,è¿™é‡Œå¯¹è…¹æ¿æ•°æ®è¿›è¡Œä¿®æ­£;
+			if (Wheel.SmallWheelStruct[i] == "å®å¿ƒ")SmallWebThickness_TEMP.push_back({ 0,0 }); else SmallWebThickness_TEMP.push_back(Wheel.SmallWebThickness[i]);
+			if (Wheel.BigWheelStruct[i] == "å®å¿ƒ")BigWebThickness_TEMP.push_back({ 0,0 }); else BigWebThickness_TEMP.push_back(Wheel.BigWebThickness[i]);
+		}
+
+		//æ¸…ç©ºåŸè…¹æ¿åšåº¦;
+		Wheel.SmallWebThickness.clear();
+		Wheel.BigWebThickness.clear();
+
+		//æ›¿æ¢ä¸ºä¿®æ­£åçš„è…¹æ¿åšåº¦;
+		for (int i = 0; i < Belt.Result.SmallWheelDiameter.size(); ++i) {
+			Wheel.SmallWebThickness.push_back(SmallWebThickness_TEMP[i]);
+			Wheel.BigWebThickness.push_back(BigWebThickness_TEMP[i]);
 		}
 	}
 
 	void AutoWheelDesign() {
 		vector<float> SmallWheelNotch, BigWheelNotch;
 		for (int i = 0; i < Belt.Result.SmallWheelDiameter.size(); ++i) {
-			//Ğ¡´øÂÖ²ÛĞÍÑ¡ĞÍ;
+			//å°å¸¦è½®æ§½å‹é€‰å‹;
 			SmallWheelNotch = WheelNotch_Indexer(Belt.Result.SmallWheelDiameter[i], PSET.Type);
 			BigWheelNotch = WheelNotch_Indexer(Belt.Result.BigWheelDiameter[i], PSET.Type);
 			Wheel.phi.push_back({ SmallWheelNotch[6], BigWheelNotch[6] });
 
-			//¼ÆËã×îĞ¡´øÂÖ¿í: B£½(z-1)e+2fmin;
+			//è®¡ç®—æœ€å°å¸¦è½®å®½: Bï¼(z-1)e+2fmin;
 			double MinSmallWheelBroad = (Belt.Result.BeltNumber_Z[i] - 1) * SmallWheelNotch[3] + 2 * SmallWheelNotch[4];
 			double MinBigWheelBroad = (Belt.Result.BeltNumber_Z[i] - 1) * BigWheelNotch[3] + 2 * BigWheelNotch[4];
 			Wheel.MinWheelBroad.push_back({ MinSmallWheelBroad, MinBigWheelBroad });
 
-			//¼ÆËã¸¹°åºñ¶È;
-			Wheel.SmallWebThickness.push_back({ round(static_cast<double>(1) / 7 * MinSmallWheelBroad) , round(static_cast<double>(1) / 4 * MinSmallWheelBroad) });	//¼ÆËãĞ¡ÂÖ¸¹°åºñ¶È;
-			Wheel.BigWebThickness.push_back({ round(static_cast<double>(1) / 7 * MinBigWheelBroad) , round(static_cast<double>(1) / 4 * MinBigWheelBroad) });		//¼ÆËã´óÂÖ¸¹°åºñ¶È;
+			//è®¡ç®—è…¹æ¿åšåº¦;
+			Wheel.SmallWebThickness.push_back({ round(static_cast<double>(1) / 7 * MinSmallWheelBroad) , round(static_cast<double>(1) / 4 * MinSmallWheelBroad) });	//è®¡ç®—å°è½®è…¹æ¿åšåº¦;
+			Wheel.BigWebThickness.push_back({ round(static_cast<double>(1) / 7 * MinBigWheelBroad) , round(static_cast<double>(1) / 4 * MinBigWheelBroad) });		//è®¡ç®—å¤§è½®è…¹æ¿åšåº¦;
 
-			//¼ÆËã´øÂÖ×îĞ¡Íâ¾¶: da£½dd+2hamin;
+			//è®¡ç®—å¸¦è½®æœ€å°å¤–å¾„: daï¼dd+2hamin;
 			double MinSmallWheelDa = Belt.Result.SmallWheelDiameter[i] + 2 * SmallWheelNotch[1];
 			double MinBigWheelDa = Belt.Result.BigWheelDiameter[i] + 2 * BigWheelNotch[1];
 			Wheel.MinWheelOutsideDameter.push_back({ MinSmallWheelDa, MinBigWheelDa });
 
-			//¼ÆËãÂÖì±¿í¶ÈL;
+			//è®¡ç®—è½®æ¯‚å®½åº¦L;
 			if (PSET.BigWheelAxleDameter == NULL)PSET.BigWheelAxleDameter = PSET.SmallWheelAxleDameter;
 			if (PSET.SmallWheelAxleDameter == NULL)PSET.SmallWheelAxleDameter = PSET.BigWheelAxleDameter;
-			if (PSET.SmallWheelAxleDameter == PSET.BigWheelAxleDameter == NULL)cout << "Error: Please Set WheelAxleDameter" << endl;
+			if (PSET.SmallWheelAxleDameter == NULL && PSET.BigWheelAxleDameter == NULL)cout << "Error: Please Set WheelAxleDameter" << endl;
 
 			if (MinSmallWheelBroad < 1.5 * PSET.SmallWheelAxleDameter) {
 				Wheel.SmallWheelHubBroad.push_back(MinSmallWheelBroad);
@@ -773,44 +788,44 @@ private:
 			}
 		}
 
-		//´¢´æÂÖ²Û½ØÃæ³ß´çÊı¾İ(Ğ¡ÂÖ,´óÂÖ);
+		//å‚¨å­˜è½®æ§½æˆªé¢å°ºå¯¸æ•°æ®(å°è½®,å¤§è½®);
 		Wheel.Bd = { SmallWheelNotch[0], BigWheelNotch[0] };
 		Wheel.Hamin = { SmallWheelNotch[1], BigWheelNotch[1] };
 		Wheel.Hfmin = { SmallWheelNotch[2], BigWheelNotch[2] };
 		Wheel.e = { SmallWheelNotch[3], BigWheelNotch[3] };
 		Wheel.Fmin = { SmallWheelNotch[4], BigWheelNotch[4] };
 		Wheel.deltaMin = { SmallWheelNotch[5], BigWheelNotch[5] };
-		//¼ÆËã×îĞ¡ÂÖÔµºñ¶È(Ğ¡ÂÖ,´óÂÖ);
+		//è®¡ç®—æœ€å°è½®ç¼˜åšåº¦(å°è½®,å¤§è½®);
 		Wheel.WheelRimThick = { Wheel.Hamin.x + Wheel.Hfmin.x + Wheel.deltaMin.x, Wheel.Hamin.y + Wheel.Hfmin.y + Wheel.deltaMin.y };
-		//¼ÆËãÂÖì±Ö±¾¶d1(Ğ¡ÂÖ,´óÂÖ);
-		if (PSET.BigWheelAxleDameter == NULL)PSET.BigWheelAxleDameter = PSET.SmallWheelAxleDameter;
-		if (PSET.SmallWheelAxleDameter == NULL)PSET.SmallWheelAxleDameter = PSET.BigWheelAxleDameter;
-		if (PSET.SmallWheelAxleDameter == PSET.BigWheelAxleDameter == NULL)cout << "Error: Please Set WheelAxleDameter" << endl;
+		//è®¡ç®—è½®æ¯‚ç›´å¾„d1(å°è½®,å¤§è½®);
+		//if (PSET.BigWheelAxleDameter == NULL)PSET.BigWheelAxleDameter = PSET.SmallWheelAxleDameter;
+		//if (PSET.SmallWheelAxleDameter == NULL)PSET.SmallWheelAxleDameter = PSET.BigWheelAxleDameter;
+		//if (PSET.SmallWheelAxleDameter == PSET.BigWheelAxleDameter == NULL)cout << "Error: Please Set WheelAxleDameter" << endl;
 		Wheel.WheelHubDameter = { 2 * PSET.SmallWheelAxleDameter , 2 * PSET.BigWheelAxleDameter };
 
-		AutoWheelStruct();//´øÂÖ½á¹¹ĞÎÊ½Ñ¡ĞÍ;
+		AutoWheelStruct();//å¸¦è½®ç»“æ„å½¢å¼é€‰å‹;
 
-		//¹À¼Æ´øÂÖÃ«Å÷ÖÊÁ¿;
+		//ä¼°è®¡å¸¦è½®æ¯›å¯è´¨é‡;
 		for (int i = 0; i < Belt.Result.SmallWheelDiameter.size(); ++i) {
-			//¼ÆËãĞ¡´øÂÖÂÖÔµÌå»ı;
+			//è®¡ç®—å°å¸¦è½®è½®ç¼˜ä½“ç§¯;
 			double SmallWheelRimVolume = HollowCylinder(Wheel.MinWheelOutsideDameter[i].x, Wheel.WheelRimINDameter[i].x, Wheel.MinWheelBroad[i].x);
-			//¼ÆËãĞ¡´øÂÖ¸¹°åÌå»ı;
-			double SmallWheelWebVolume = 0; if (Wheel.SmallWheelStruct[i] == "¸¹°å" || Wheel.SmallWheelStruct[i] == "¿×°å") SmallWheelWebVolume = HollowCylinder(Wheel.WheelRimINDameter[i].x, Wheel.WheelHubDameter.x, 0.5 * (Wheel.SmallWebThickness[i].y - Wheel.SmallWebThickness[i].x));
-			//¼ÆËãĞ¡´øÂÖÂÖì±Ìå»ı;
+			//è®¡ç®—å°å¸¦è½®è…¹æ¿ä½“ç§¯;
+			double SmallWheelWebVolume = 0; if (Wheel.SmallWheelStruct[i] == "è…¹æ¿" || Wheel.SmallWheelStruct[i] == "å­”æ¿") SmallWheelWebVolume = HollowCylinder(Wheel.WheelRimINDameter[i].x, Wheel.WheelHubDameter.x, 0.5 * (Wheel.SmallWebThickness[i].y - Wheel.SmallWebThickness[i].x));
+			//è®¡ç®—å°å¸¦è½®è½®æ¯‚ä½“ç§¯;
 			double SmallWheelHubVolume = HollowCylinder(Wheel.WheelHubDameter.x, PSET.SmallWheelAxleDameter, Wheel.SmallWheelHubBroad[i]);
-			//Ğ¡´øÂÖÔ¤¹ÀÃ«Å÷×ÜÌå»ı;
+			//å°å¸¦è½®é¢„ä¼°æ¯›å¯æ€»ä½“ç§¯;
 			double SmallWheelVolume = (SmallWheelRimVolume + SmallWheelWebVolume + SmallWheelHubVolume) * pow(10, -9);
 
-			//¼ÆËã´ó´øÂÖÂÖÔµÌå»ı;
+			//è®¡ç®—å¤§å¸¦è½®è½®ç¼˜ä½“ç§¯;
 			double BigWheelRimVolume = HollowCylinder(Wheel.MinWheelOutsideDameter[i].y, Wheel.WheelRimINDameter[i].y, Wheel.MinWheelBroad[i].y);
-			//¼ÆËã´ó´øÂÖ¸¹°åÌå»ı;
-			double BigWheelWebVolume = 0; if (Wheel.BigWheelStruct[i] == "¸¹°å" || Wheel.BigWheelStruct[i] == "¿×°å") BigWheelWebVolume = HollowCylinder(Wheel.WheelRimINDameter[i].y, Wheel.WheelHubDameter.y, 0.5 * (Wheel.BigWebThickness[i].y - Wheel.BigWebThickness[i].y));
-			//¼ÆËã´ó´øÂÖÂÖì±Ìå»ı;
+			//è®¡ç®—å¤§å¸¦è½®è…¹æ¿ä½“ç§¯;
+			double BigWheelWebVolume = 0; if (Wheel.BigWheelStruct[i] == "è…¹æ¿" || Wheel.BigWheelStruct[i] == "å­”æ¿") BigWheelWebVolume = HollowCylinder(Wheel.WheelRimINDameter[i].y, Wheel.WheelHubDameter.y, 0.5 * (Wheel.BigWebThickness[i].y - Wheel.BigWebThickness[i].y));
+			//è®¡ç®—å¤§å¸¦è½®è½®æ¯‚ä½“ç§¯;
 			double BigWheelHubVolume = HollowCylinder(Wheel.WheelHubDameter.y, PSET.BigWheelAxleDameter, Wheel.BigWheelHubBroad[i]);
-			//´ó´øÂÖÔ¤¹ÀÃ«Å÷×ÜÌå»ı;
+			//å¤§å¸¦è½®é¢„ä¼°æ¯›å¯æ€»ä½“ç§¯;
 			double BigWheelVolume = (BigWheelRimVolume + BigWheelWebVolume + BigWheelHubVolume) * pow(10, -9);
 
-			//·Ö±ğ¼ÆËãÁ½ÂÖÔ¤¹ÀÃ«Å÷ÖÊÁ¿(Ğ¡ÂÖ,´óÂÖ);
+			//åˆ†åˆ«è®¡ç®—ä¸¤è½®é¢„ä¼°æ¯›å¯è´¨é‡(å°è½®,å¤§è½®);
 			Wheel.EstimateMass.push_back({ SmallWheelVolume * HT150 , BigWheelVolume * HT150 });
 		}
 	}
@@ -821,7 +836,7 @@ public:
 	Prerequisites PSET;
 	void AutoVBelt() {
 		AutoWheelBenchmarkDiameter();
-		AutoBeltGeometricParameters(40);
+		AutoBeltGeometricParameters(20);
 		AutoWheelDesign();
 	}
 
@@ -829,18 +844,16 @@ public:
 		ofstream outFile;
 		outFile.open("VBeltDesignerData.csv", ios::out);
 
-		//setiosflags(ios::fixed);
-
-		outFile << "KA" << "," << "ÃûÒå¹¦ÂÊ(kW)" << "," << "Ğ¡ÂÖ×ªËÙ(r/min)" << "," << "´øĞÍ" << "," << "»ù×¼¿í¶ÈBd" << "," << "Hamin" << "," << "Hfmin"
-			<< "," << "²Û¼ä¾àe" << "," << "Fmin" << "," << "¦Ämin" << "," << "Öá¿×¾¶d" << endl;
+		outFile << "KA" << "," << "åä¹‰åŠŸç‡(kW)" << "," << "å°è½®è½¬é€Ÿ(r/min)" << "," << "å¸¦å‹" << "," << "åŸºå‡†å®½åº¦Bd" << "," << "Hamin" << "," << "Hfmin"
+			<< "," << "e" << "," << "Fmin" << "," << "Î´min" << "," << "è½´å­”å¾„d" << endl;
 
 		outFile << PSET.KA << "," << PSET.NominalPower << "," << PSET.SmallWheelRotatingSpeed << "," << PSET.Type << "," << Wheel.Bd.x << " / " << Wheel.Bd.y << ","
 			<< Wheel.Hamin.x << " / " << Wheel.Hamin.y << "," << Wheel.Hfmin.x << " / " << Wheel.Hfmin.y << "," << Wheel.e.x << " / " << Wheel.e.y << "," << Wheel.Fmin.x << " / " << Wheel.Fmin.y
 			<< "," << Wheel.deltaMin.x << " / " << Wheel.deltaMin.y << "," << PSET.SmallWheelAxleDameter << " / " << PSET.BigWheelAxleDameter << "," << "\n" << endl;
 
-		outFile << "Ğ¡ÂÖ" << "/" << "´óÂÖÖ±¾¶" << ", " << "´«¶¯±È" << ", " << "´ø»ù×¼³¤¶È" << ", " << "ÖĞĞÄ¾Ø" << ", " << "Ğ¡ÂÖ°ü½Ç(¡ã)" << ", "
-			<< "´øËÙ(m/s)" << ", " << "´øµÄ¸ùÊı" << "," << "½¨Òé´øÂÖ½á¹¹" << "," << "²ÛÂÖ½Ç¦Õ(¡ã)" << "," << "×îĞ¡´øÂÖ¿íB" << "," << "ÂÖì±¿í¶ÈL" << "," << "×îĞ¡Íâ¾¶da" << ","
-			<< "ÂÖì±Ö±¾¶d1" << "," << "ÂÖÔµÄÚ¾¶D1" << "," << "¸¹°åºñ¶ÈC'" << "," << "Ô¤¹ÀÃ«Å÷ÖÊÁ¿(Kg)" << endl;
+		outFile << "å°è½®" << " / " << "å¤§è½®ç›´å¾„" << "," << "ä¼ åŠ¨æ¯”" << ", " << "å¸¦åŸºå‡†é•¿åº¦" << ", " << "ä¸­å¿ƒçŸ©" << ", " << "å°è½®åŒ…è§’(Â°)" << ", "
+			<< "å¸¦é€Ÿ(m/s)" << ", " << "å¸¦çš„æ ¹æ•°" << "," << "å»ºè®®å¸¦è½®ç»“æ„" << "," << "æ§½è½®è§’Ï†(Â°)" << "," << "æœ€å°å¸¦è½®å®½B" << "," << "è½®æ¯‚å®½åº¦L" << "," << "æœ€å°å¤–å¾„da" << ","
+			<< "è½®æ¯‚ç›´å¾„d1" << "," << "è½®ç¼˜å†…å¾„D1" << "," << "è…¹æ¿åšåº¦C'" << "," << "é¢„ä¼°æ¯›å¯è´¨é‡(Kg)" << endl;
 
 		for (int i = 0; i < Belt.Result.SmallWheelDiameter.size(); ++i) {
 			outFile << Belt.Result.SmallWheelDiameter[i] << " / " << Belt.Result.BigWheelDiameter[i] << "," << Belt.Result.TransmissionRatio[i]
@@ -861,9 +874,11 @@ int main() {
 	VBDD.PSET.KA = 1.2;
 	VBDD.PSET.NominalPower = 7;
 	VBDD.PSET.Type = "B";
-	VBDD.PSET.ImagTransmissionRatio = 2.909091;
+	VBDD.PSET.ImagTransmissionRatio = 2.909090909090909;
 	VBDD.PSET.SmallWheelRotatingSpeed = 960;
-	VBDD.PSET.SmallWheelAxleDameter = 32;
+	VBDD.PSET.SmallWheelAxleDameter = 40;
+	VBDD.PSET.BigWheelAxleDameter = 50;
+	VBDD.PSET.TransmissionRatioTolerance = 0.05;
 
 	VBDD.AutoVBelt();
 
